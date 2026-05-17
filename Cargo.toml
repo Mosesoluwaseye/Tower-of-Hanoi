@@ -1,0 +1,19 @@
+[package]
+name = "tower_of_hanoi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "tower_of_hanoi"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tower_of_hanoi"
+path = "src/main.rs"
+
+[[bin]]
+name = "hanoi_benchmark"
+path = "src/bin/hanoi_benchmark.rs"
+
+[dev-dependencies]
+rand = "0.8"
