@@ -1,74 +1,140 @@
-Tower of Hanoi (Rust)
+# Tower of Hanoi (Rust Implementation)
 
-Simple, well-tested Rust implementations of the Tower of Hanoi puzzle.
+## Overview
 
-Description:
+This repository implements the **Tower of Hanoi** puzzle in Rust using two different approaches:
 
-This repository contains two implementations of the Tower of Hanoi problem in Rust: a classical recursive solver and an iterative solver. Both implementations return the sequence of moves as a Vec<(u32, u32)> (source peg, destination peg) which makes them easy to test and benchmark.
+- a **recursive solution** that follows the classical mathematical definition,
+- an **iterative solution** that avoids recursion and can be used for performance comparison.
 
-Implementations
+The objective is to move `n` disks from a source peg to a destination peg using a helper peg, subject to these rules:
 
-Recursive: straightforward recursive algorithm that follows the mathematical definition.
-Iterative: loop-based implementation that simulates legal moves without recursion (useful for benchmarking and avoiding call-stack overhead).
-Complexity
+- Only one disk may be moved at a time.
+- A larger disk cannot be placed on top of a smaller disk.
 
-Time: O(2^n) — both implementations produce the same number of moves (2^n - 1).
-Space: recursive uses O(n) stack depth; iterative stores moves O(2^n) if you materialize them.
-Project Layout
+---
 
+## Implementations
+
+### 1. Recursive Approach
+
+The recursive solution follows the classical definition:
+
+1. Move `n-1` disks from the source peg to the helper peg.
+2. Move the largest disk from the source peg to the destination peg.
+3. Move the `n-1` disks from the helper peg to the destination peg.
+
+This implementation is clean and easy to reason about, but it relies on the function call stack.
+
+### 2. Iterative Approach
+
+The iterative solution uses a loop-based strategy to generate the legal moves without recursion.
+
+- Uses a loop-based method instead of recursive function calls.
+- Avoids recursion overhead.
+- Produces the same move sequence using an explicit simulation of peg movement.
+
+This version is useful for benchmarking and understanding how implementation style affects runtime performance.
+
+---
+
+## Implementation Details
+
+- Language: Rust
+- Core logic: `src/lib.rs`
+- Program execution: `src/main.rs`
+- Benchmarking: `src/bin/hanoi_benchmark.rs`
+- Testing: `tests/hanoi_test.rs`
+
+Moves are stored in a `Vec<(u32, u32)>` so the output is easy to verify and benchmark.
+
+---
+
+## Complexity Analysis
+
+Both implementations have the same theoretical complexity:
+
+- **Time Complexity:** O(2^n)
+- **Space Complexity:**
+  - Recursive: O(n) due to recursion stack usage.
+  - Iterative: O(2^n) if all moves are materialized in memory.
+
+The number of required moves is fixed at `2^n - 1`.
+
+---
+
+## Benchmark Analysis
+
+Benchmarks compare both implementations using the same move count.
+
+Although the theoretical complexity is the same, runtime can differ:
+
+- Recursive implementation pays function call overhead.
+- Iterative implementation avoids recursive calls, which can be faster in practice.
+
+This shows how **real-world performance** can vary even when asymptotic complexity is identical.
+
+---
+
+## Notes
+
+- Storing moves in a `Vec` improves testability and modularity.
+- In competitive programming environments (e.g., CSES), printing moves directly is more memory-efficient.
+- For typical constraints (`n ≤ 16`), recursion depth is safe and stack overflow is unlikely.
+
+---
+
+## Usage
+
+Build and run the CLI binary (default uses the recursive solver):
+
+```bash
+cargo run --bin tower_of_hanoi -- 4 rec
+```
+
+Run iterative mode:
+
+```bash
+cargo run --bin tower_of_hanoi -- 4 iter
+```
+
+The first argument is the number of disks. The second optional argument selects `rec` (recursive) or `iter` (iterative).
+
+---
+
+## Run Benchmark
+
+```bash
+cargo run --bin hanoi_benchmark -- 16
+```
+
+---
+
+## Testing
+
+```bash
+cargo test
+```
+
+---
+
+## Project Structure
+
+```
 Cargo.toml
 README.md
 src/
-  ├─ lib.rs          # core algorithms (solve_recursive, solve_iterative)
-  ├─ main.rs         # CLI binary (select mode: rec/iter)
-  └─ bin/
-	  └─ hanoi_benchmark.rs
+ ├── lib.rs
+ ├── main.rs
+ └── bin/
+     └── hanoi_benchmark.rs
+
 tests/
-  └─ hanoi_test.rs
-See the implementation files:
+ └── hanoi_test.rs
+```
 
-src/lib.rs
-src/main.rs
-src/bin/hanoi_benchmark.rs
-tests/hanoi_test.rs
-Usage
+---
 
-Build and run the CLI binary (default uses recursive solver):
+## Author
 
-cargo run --bin tower_of_hanoi -- 4 rec
-Run iterative mode:
-
-cargo run --bin tower_of_hanoi -- 4 iter
-The first argument is the number of disks; the second optional argument selects rec (recursive) or iter (iterative).
-
-Benchmark
-
-Compare implementations using the provided benchmark binary:
-
-cargo run --bin hanoi_benchmark -- 16
-Testing
-
-Run unit/integration tests:
-
-cargo test
-Example output
-
-For n = 3 the program prints 7 moves. Example (recursive):
-
-1: Move disk from 1 to 3
-2: Move disk from 1 to 2
-3: Move disk from 3 to 2
-4: Move disk from 1 to 3
-5: Move disk from 2 to 1
-6: Move disk from 2 to 3
-7: Move disk from 1 to 3
-Notes
-
-Moves are stored as (from, to) using peg indices 1 (A), 2 (B), 3 (C).
-Materializing all moves is convenient for testing and benchmarking; printing directly is more memory-efficient for very large n.
-For typical constraints (n ≤ 16) both implementations run quickly and recursion depth is safe.
-If you want, I can also:
-
-add a short example program that prints moves directly without storing them,
-commit these files and create a git tag/release,
-or run cargo test and the benchmark here.
+Oluwaseye Moses
