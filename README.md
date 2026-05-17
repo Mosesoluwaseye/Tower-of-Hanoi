@@ -1,139 +1,88 @@
-# Tower of Hanoi (Rust Implementation)
+# Tower of Hanoi — Rust Solver
 
 ## Overview
 
-This repository implements the **Tower of Hanoi** puzzle in Rust using two different approaches:
+This repository contains a Rust implementation of the Tower of Hanoi puzzle.
 
-- a **recursive solution** that follows the classical mathematical definition,
-- an **iterative solution** that avoids recursion and can be used for performance comparison.
+The goal is to move `n` disks from peg `1` to peg `3` using peg `2` as auxiliary storage, while obeying these rules:
 
-The objective is to move `n` disks from a source peg to a destination peg using a helper peg, subject to these rules:
+- Move only one disk at a time.
+- Never place a larger disk on top of a smaller disk.
 
-- Only one disk may be moved at a time.
-- A larger disk cannot be placed on top of a smaller disk.
+## What is included
 
----
+- `Cses.rs`
+  - A standalone Rust program that reads a single integer from standard input,
+    generates the complete move sequence, prints the move count, and lists each move.
+- `Hanoi Benchmarks`
+  - A benchmark harness that compares recursive and iterative solver runtimes.
+- `Hanoi_test.rs`
+  - A test file that validates solver output and compares recursive vs iterative solutions.
+- `Cargo.toml`
+  - Project metadata and crate configuration.
 
-## Implementations
+## Solver Behavior
 
-### 1. Recursive Approach
+The implementation uses a vector of moves of type `Vec<(u32, u32)>`.
+Each tuple represents a disk move from one peg to another.
 
-The recursive solution follows the classical definition:
+The expected number of moves for `n` disks is `2^n - 1`.
 
-1. Move `n-1` disks from the source peg to the helper peg.
-2. Move the largest disk from the source peg to the destination peg.
-3. Move the `n-1` disks from the helper peg to the destination peg.
+## How to run
 
-This implementation is clean and easy to reason about, but it relies on the function call stack.
-
-### 2. Iterative Approach
-
-The iterative solution uses a loop-based strategy to generate the legal moves without recursion.
-
-- Uses a loop-based method instead of recursive function calls.
-- Avoids recursion overhead.
-- Produces the same move sequence using an explicit simulation of peg movement.
-
-This version is useful for benchmarking and understanding how implementation style affects runtime performance.
-
----
-
-## Implementation Details
-
-- Language: Rust
-- Core logic: `src/lib.rs`
-- Program execution: `src/main.rs`
-- Benchmarking: `src/bin/hanoi_benchmark.rs`
-- Testing: `tests/hanoi_test.rs`
-
-Moves are stored in a `Vec<(u32, u32)>` so the output is easy to verify and benchmark.
-
----
-
-## Complexity Analysis
-
-Both implementations have the same theoretical complexity:
-
-- **Time Complexity:** O(2^n)
-- **Space Complexity:**
-  - Recursive: O(n) due to recursion stack usage.
-  - Iterative: O(2^n) if all moves are materialized in memory.
-
-The number of required moves is fixed at `2^n - 1`.
-
----
-
-## Benchmark Analysis
-
-Benchmarks compare both implementations using the same move count.
-
-Although the theoretical complexity is the same, runtime can differ:
-
-- Recursive implementation pays function call overhead.
-- Iterative implementation avoids recursive calls, which can be faster in practice.
-
-This shows how **real-world performance** can vary even when asymptotic complexity is identical.
-
----
-
-## Notes
-
-- Storing moves in a `Vec` improves testability and modularity.
-- In competitive programming environments (e.g., CSES), printing moves directly is more memory-efficient.
-- For typical constraints (`n ≤ 16`), recursion depth is safe and stack overflow is unlikely.
-
----
-
-## Usage
-
-Build and run the CLI binary (default uses the recursive solver):
+The simplest way to run the solver is to compile `Cses.rs` directly:
 
 ```bash
-cargo run --bin tower_of_hanoi -- 4 rec
+rustc Cses.rs -o hanoi_solver
+printf "4\n" | ./hanoi_solver
 ```
 
-Run iterative mode:
+This prints the minimum number of moves followed by each move in `from to` format.
 
-```bash
-cargo run --bin tower_of_hanoi -- 4 iter
-```
+## Benchmarking
 
-The first argument is the number of disks. The second optional argument selects `rec` (recursive) or `iter` (iterative).
+The benchmark harness in `Hanoi Benchmarks` is designed to compare recursive and iterative implementations.
+It assumes a `tower_of_hanoi` crate with `solve_recursive` and `solve_iterative` functions.
 
----
-
-## Run Benchmark
+If the crate is available, run the benchmark with:
 
 ```bash
 cargo run --bin hanoi_benchmark -- 16
 ```
 
----
-
 ## Testing
+
+`Hanoi_test.rs` contains a validation test that ensures both recursive and iterative solutions:
+
+- produce the same number of moves,
+- generate legal Tower of Hanoi moves,
+- solve the puzzle correctly for small values of `n`.
+
+Run tests with:
 
 ```bash
 cargo test
 ```
 
----
+## Algorithm summary
 
-## Project Structure
+- Recursive solver
+  - Solve `n - 1` disks from source to auxiliary.
+  - Move the largest disk from source to destination.
+  - Solve `n - 1` disks from auxiliary to destination.
+- Iterative solver
+  - Generate moves using an explicit algorithm rather than deep recursion.
 
-```
-Cargo.toml
-README.md
-src/
- ├── lib.rs
- ├── main.rs
- └── bin/
-     └── hanoi_benchmark.rs
+## Complexity
 
-tests/
- └── hanoi_test.rs
-```
+- Time complexity: O(2^n)
+- Number of moves: `2^n - 1`
+- Recursive memory: O(n) stack depth
 
----
+## Notes
+
+- `Cses.rs` is suitable for direct execution and CSES-style input/output.
+- The benchmark/test files show how the solver can be extended into a crate-based Rust project.
 
 ## Author
 
